@@ -19,3 +19,10 @@ def data_preparation(url):
     data_df = data_df.set_index("Country/Region")
     data_df = data_df.groupby(level=0).sum()
     return data_df
+
+
+data = data_preparation(DEATH_BY_COV)
+data = data.loc["Brazil"]
+data.values[::10]
+plt.plot(data.index[::10], data.values[::10])
+plt.show()
