@@ -1,4 +1,4 @@
-import numpy as numpy
+import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -21,8 +21,34 @@ def data_preparation(url):
     return data_df
 
 
-data = data_preparation(DEATH_BY_COV)
-data = data.loc["Brazil"]
-data.values[::10]
-plt.plot(data.index[::10], data.values[::10])
-plt.show()
+def data_country(cases_table, death_table, country):
+    """
+    Function to create a matrix with data of confirmed cases of COVID-19 and
+    death by COVID-19. The first column is data-times, the second column is
+    confirmed cases of COVID-19, and the third column is deaths by COVID-19.
+    PARAMETERS
+    ----------
+    data_table: DataFrame with cases
+    death_table: DataFrame with deaths
+    country: Country to analize
+    """
+    data_cases = cases_table.loc[country]
+    data_death = death_table.loc[country]
+    data_array = np.c_[data_cases.index,
+                       data_cases.values,
+                       data_death.values]
+    return data_array
+
+
+# ------------------------------------------------
+cases_df = data_preparation(url=CASES_COV)
+death_df = data_preparation(url=DEATH_BY_COV)
+# ------------------------------------------------
+
+# def country_plot(country, subplot=True, save=False)
+country = "Brazil"
+data_df = data_country(cases_table=cases_df,
+                       death_table=death_df,
+                       country=country)
+cases = data_df[:, [0, 1]]
+print(cases)
