@@ -181,7 +181,6 @@ def comparison_plots(data_cases, data_death, countries, save=True):
     countries: List the countries to analize.
     save: Flag to save the plot. Default value is True.
     """
-    labels = "COVID-19 cases,COVID-19 deaths".split(",")
     linestyle = "-. --".split(" ")
     linewidth = 0.9
     step_x = 20
@@ -275,18 +274,15 @@ def new_cases_per_day(data_cases, data_death, country, windows_size=7,
     save: Flag to save the plot. Default value is True.
     """
 
-    labels = "New confirmed cases of COVID per day,New confirmed deaths from COVID per day".split(
-        ",")
+    labels = "New confirmed cases of COVID per day,New confirmed deaths from\
+COVID per day".split(",")
     colors = "tab:blue tab:red".split(" ")
-    linestyle = "-. --".split(" ")
     linewidth = 0.9
     step_x = 20
     step_y = 15
     size = 12
     title_case = "New cases reported per day in"
     title_deaths = "New deaths reported per day in"
-    label_cases = "Confirmed COVID-19 cases"
-    label_death = "Deaths reported by COVID-19"
 
     data_df = data_country(cases_table=data_cases,
                            death_table=data_death,
@@ -377,17 +373,18 @@ def new_cases_per_day(data_cases, data_death, country, windows_size=7,
                         dpi=300)
 
 
-def new_cases_per_day_fill_plot(data_cases, data_death, country, windows_size=7,
-                                save=True):
+def new_cases_per_day_fill_plot(data_cases, data_death, country,
+                                windows_size=7, save=True):
     """
-    Function to graph the moving average and standard deviation for newly registered cases of
-    COVID-19 and new deaths registered per day.
+    Function to graph the moving average and standard deviation for newly
+    registered cases of COVID-19 and new deaths registered per day.
     PARAMETERS
     ----------
     data_cases: DataFrame with cases.
     data_death: DataFrame with deaths.
     country: Country to analize.
-    windows_size: Number of elements to compute the average. Defauld value is 7.
+    windows_size: Number of elements to compute the average. Defauld value is
+    7.
     save: Flag to save the plot. Default value is True.
     """
 
