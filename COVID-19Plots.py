@@ -294,36 +294,31 @@ COVID per day".split(",")
     title_case = "New cases reported per day in"
     title_deaths = "New deaths reported per day in"
 
-    data_df = data_country(cases_table=data_cases,
-                           death_table=data_death,
+    data_df = data_per_day(data_cases=data_cases,
+                           data_death=data_death,
                            country=country)
-    date_time = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
-                                  data_df[:, 0])))[1:]
-    cases = data_df[:, 1]
-    deaths = data_df[:, 2]
-    new_cases = np.array(list(map(lambda i: cases[i] - cases[i-1],
-                                  range(1, len(cases)))))
-    new_deaths = np.array(list(map(lambda i: deaths[i] - deaths[i-1],
-                                   range(1, len(deaths)))))
-    new_values = (new_cases, new_deaths)
+    cases = data_df[0]
+    deaths = data_df[0]
+    date_time_cases = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
+                                        cases[:, 0])))
+    date_time_deaths = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
+                                         deaths[:, 0])))
+    new_values = (cases[:, 1], deaths[:, 1])
+    data_times = (date_time_cases, date_time_deaths)
     # SMA
-    new_cases_mov_aver = np.convolve(a=new_cases,
-                                     v=np.ones(windows_size),
-                                     mode="valid")/windows_size
-    new_deaths_mov_aver = np.convolve(a=new_deaths,
-                                      v=np.ones(windows_size),
-                                      mode="valid")/windows_size
-    new_values_sma = (new_cases_mov_aver, new_deaths_mov_aver)
-    # EMA alpha1
-    new_cases_mov_aver_exp1 = pd.DataFrame(
-        new_cases).ewm(alpha=alpha1, adjust=False).mean()
-    new_deaths_mov_aver_exp1 = pd.DataFrame(
-        new_deaths).ewm(alpha=alpha1, adjust=False).mean()
-    new_values_ema_alph1 = (new_cases_mov_aver_exp1, new_deaths_mov_aver_exp1)
+    new_values_sma = tuple(map(lambda i: pd.Series(new_values[i]).rolling(
+        windows_size).mean().dropna().values,
+        range(len(new_values))))
+    # EMA
+    new_values_ema = tuple(map(lambda i:
+                               pd.DataFrame(new_values[i]).ewm(alpha=alpha1,
+                                                               adjust=False).mean().values,
+                               range(len(new_values))))
 
-    data_ticks = date_time[np.arange(0,
-                                     len(date_time),
-                                     step_x)]
+    data_ticks = (date_time_cases[np.arange(0, len(date_time_cases),
+                                            step_x)],
+                  date_time_deaths[np.arange(0, len(date_time_deaths),
+                                             step_x)])
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(13, 7))
     fig.subplots_adjust(hspace=0.03,
                         wspace=0.22,
@@ -334,11 +329,14 @@ COVID per day".split(",")
     zip_values = zip(ax,
                      new_values,
                      new_values_sma,
-                     new_values_ema_alph1,
+                     new_values_ema,
+                     data_times,
+                     data_ticks,
                      (title_case, title_deaths),
                      colors,
                      labels)
-    for axis, new_values, average_mov, average_exp_mov1, title, color, label in zip_values:
+    for axis, new_values, average_mov, average_exp_mov1, date_time, data_tick,\
+            title, color, label in zip_values:
         axis.set_title(f"{title} {country}", size=size + 2)
         axis.bar(date_time,
                  new_values,
@@ -358,7 +356,7 @@ COVID per day".split(",")
                   linewidth=linewidth,
                   color="darkblue",
                   label=fr"EMA $\alpha$ = {alpha1}")
-        axis.set_xticks(data_ticks)
+        axis.set_xticks(data_tick)
         axis.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%d'))
         axis.xaxis.set_tick_params(rotation=0,
                                    labelsize=size-3)
@@ -494,7 +492,10 @@ DEATH_BY_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master
 CASES_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 cases_df = data_preparation(url=CASES_COV)
 death_df = data_preparation(url=DEATH_BY_COV)
-print(data_per_day(data_cases=cases_df, data_death=death_df, country="Spain"))
+new_cases_per_day(data_cases=cases_df, data_death=death_df,
+                  country="Spain", save=False)
+plt.show()
+#print(data_per_day(data_cases=cases_df, data_death=death_df, country="Spain"))
 
 
 """
