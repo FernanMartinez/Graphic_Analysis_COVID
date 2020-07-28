@@ -41,6 +41,27 @@ def data_country(cases_table, death_table, country):
     return data_array
 
 
+def data_per_day(data_cases, data_death, country):
+
+    data_df = data_country(cases_table=data_cases,
+                           death_table=data_death,
+                           country=country)
+    data_df = map(lambda i: data_df[i] - data_df[i-1],
+                  range(1, np.shape(data_df)[0]))
+    """
+    date_time = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
+                                  data_df[:, 0])))[1:]
+    cases = data_df[:, 1]
+    deaths = data_df[:, 2]
+
+    new_cases = np.array(list(map(lambda i: cases[i] - cases[i-1],
+                                  range(1, len(cases)))))
+    new_deaths = np.array(list(map(lambda i: deaths[i] - deaths[i-1],
+                                   range(1, len(deaths)))))
+    new_values = (new_cases, new_deaths)
+    """
+
+
 def country_plot(data_cases, data_death, country, subplot=True, save=True):
     """
     Function to plot the data of COVID-19 confirmed cases and deaths by
@@ -95,31 +116,20 @@ def country_plot(data_cases, data_death, country, subplot=True, save=True):
                   ls=linestyle[1],
                   color=colors[1])
 
-    data_ticks = date_time[np.arange(0,
-                                     len(date_time),
-                                     step_x)]
+    data_ticks = date_time[np.arange(0, len(date_time), step_x)]
     ax.set_xticks(data_ticks)
     ax.xaxis.set_major_formatter(mdates.DateFormatter('%b\n%d'))
-    ax.xaxis.set_tick_params(rotation=0,
-                             labelsize=size-3)
+    ax.xaxis.set_tick_params(rotation=0, labelsize=size-3)
 
-    cases_tick = np.linspace(0,
-                             cases[-1],
-                             step_y,
-                             dtype=int)
+    cases_tick = np.linspace(0, cases[-1], step_y, dtype=int)
     ax.set_yticks(cases_tick)
     ax.yaxis.set_tick_params(labelsize=size-3)
-    ax.set_ylabel(labely,
-                  size=size)
+    ax.set_ylabel(labely, size=size)
 
-    death_tick = np.linspace(0,
-                             deaths[-1],
-                             step_y,
-                             dtype=int)
+    death_tick = np.linspace(0, deaths[-1], step_y, dtype=int)
     ax_death.set_yticks(death_tick)
     ax_death.yaxis.set_tick_params(labelsize=size-3)
-    ax_death.set_ylabel(labely2,
-                        size=size)
+    ax_death.set_ylabel(labely2, size=size)
     ax.grid(True,
             ls=":",
             lw=0.5,
@@ -391,15 +401,12 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
     labels = "New confirmed cases of COVID per day,New confirmed deaths from COVID per day".split(
         ",")
     colors = "tab:blue tab:red".split(" ")
-    linestyle = "-. --".split(" ")
     linewidth = 0.9
     step_x = 20
     step_y = 15
     size = 12
     title_case = "SMA and STD to new cases reported per day in"
     title_deaths = "SMA and STD to New deaths reported per day in"
-    label_cases = "Confirmed COVID-19 cases"
-    label_death = "Deaths reported by COVID-19"
 
     data_df = data_country(cases_table=data_cases,
                            death_table=data_death,
@@ -408,6 +415,7 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
                                   data_df[:, 0])))[1:]
     cases = data_df[:, 1]
     deaths = data_df[:, 2]
+
     new_cases = np.array(list(map(lambda i: cases[i] - cases[i-1],
                                   range(1, len(cases)))))
     new_deaths = np.array(list(map(lambda i: deaths[i] - deaths[i-1],
@@ -442,7 +450,8 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
                      (title_case, title_deaths),
                      colors,
                      labels)
-    for axis, new_value, average_mov, average_std, title, color, label in zip_values:
+    for axis, new_value, average_mov, average_std, title,\
+            color, label in zip_values:
         axis.set_title(f"{title} {country}", size=size + 2)
         axis.plot(date_time[windows_size-1:],
                   average_mov,
@@ -481,22 +490,39 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
                     dpi=300)
 
 
+"""
 if __name__ == "__main__":
     DEATH_BY_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
     CASES_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 
     cases_df = data_preparation(url=CASES_COV)
     death_df = data_preparation(url=DEATH_BY_COV)
+    COUNTRIES_TO_ANALIZE = "Peru,Russia,Italy,US,France,Germany,Spain,\
+Portugal,Brazil,Colombia,Mexico,Ecuador,United Kingdom".split(",")
+    COUNTRIES_TO_ANALIZE = "Peru,Spain,Italy".split(
+        ",")
 
-    country_plot(data_cases=cases_df, data_death=death_df,
-                 country="Brazil", save=False, subplot=True)
+    for country in COUNTRIES_TO_ANALIZE:
+        country_plot(data_cases=cases_df,
+                     data_death=death_df,
+                     country=country,
+                     save=False,
+                     subplot=True)
+        new_cases_per_day(data_cases=cases_df,
+                          data_death=death_df,
+                          country=country,
+                          save=False,
+                          windows_size=7,
+                          alpha1=0.1)
+        new_cases_per_day_fill_plot(data_cases=cases_df,
+                                    data_death=death_df,
+                                    country=country,
+                                    windows_size=7,
+                                    save=False)
 
-    comparison_plots(data_cases=cases_df, data_death=death_df,
-                     countries=["US", "Brazil", "Mexico"], save=False)
 
-    new_cases_per_day(data_cases=cases_df, data_death=death_df, country="Brazil",
-                      save=False, windows_size=7, alpha1=0.1)
+#    comparison_plots(data_cases=cases_df, data_death=death_df,
+#                     countries=["US", "Brazil", "Mexico"], save=False)
 
-    new_cases_per_day_fill_plot(data_cases=cases_df, data_death=death_df,
-                                country="Argentina", windows_size=7, save=False)
     plt.show()
+"""
