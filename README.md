@@ -38,6 +38,18 @@ The code has seven functions, three functions are for data processing and four f
 
 ## Some results
 
-### **'country_plot'**
+### **`country_plot`**
 
 ![Italy](Countries/Italy.png) ![US](Countries/US.png)
+
+### **`comparison_plots`**
+
+![](Comparison/BrazilMexicoUSCanada.png)
+
+### **`new_cases_per_day`**
+
+![Italy](New_cases_per_day/Italy.png) ![US](New_cases_per_day/US.png)
+
+### **`new_cases_per_day_fill_plot`**
+
+![Italy](New_cases_fill_plot/Italy.png) ![US](New_cases_fill_plot/US.png)

@@ -292,7 +292,7 @@ def comparison_plots(data_cases, data_death, countries, save=True):
         axis.set_ylabel(label,
                         size=size)
     if save:
-        plt.savefig(f"Comparison/{' '.join(countries)}.png",
+        plt.savefig(f"Comparison/{''.join(countries)}.png",
                     dpi=300)
 
 
