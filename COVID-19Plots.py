@@ -46,20 +46,20 @@ def data_per_day(data_cases, data_death, country):
     data_df = data_country(cases_table=data_cases,
                            death_table=data_death,
                            country=country)
-    data_df = map(lambda i: data_df[i] - data_df[i-1],
-                  range(1, np.shape(data_df)[0]))
-    """
-    date_time = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
-                                  data_df[:, 0])))[1:]
     cases = data_df[:, 1]
-    deaths = data_df[:, 2]
+    death = data_df[:, 2]
 
-    new_cases = np.array(list(map(lambda i: cases[i] - cases[i-1],
-                                  range(1, len(cases)))))
-    new_deaths = np.array(list(map(lambda i: deaths[i] - deaths[i-1],
-                                   range(1, len(deaths)))))
-    new_values = (new_cases, new_deaths)
-    """
+    cases = np.array(list(map(lambda i: cases[i] - cases[i-1],
+                              range(1, len(cases)))))
+    cases = np.c_[data_df[1:, 0], cases]
+    cases = np.array(list(filter(lambda x: x[-1] >= 0, cases)))
+
+    death = np.array(list(map(lambda i: death[i] - death[i-1],
+                              range(1, len(death)))))
+    death = np.c_[data_df[1:, 0], death]
+    death = np.array(list(filter(lambda x: x[-1] >= 0, death)))
+
+    return cases, death
 
 
 def country_plot(data_cases, data_death, country, subplot=True, save=True):
@@ -488,6 +488,13 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
     if save:
         plt.savefig(f"New_cases_fill_plot/{country}.png",
                     dpi=300)
+
+
+DEATH_BY_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
+CASES_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+cases_df = data_preparation(url=CASES_COV)
+death_df = data_preparation(url=DEATH_BY_COV)
+print(data_per_day(data_cases=cases_df, data_death=death_df, country="Spain"))
 
 
 """
