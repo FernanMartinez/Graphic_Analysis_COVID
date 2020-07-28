@@ -11,7 +11,15 @@ style.use('seaborn-poster')
 def data_preparation(url):
     """
     Function to prepare the data to be analyzed.
+
+    Args:
+        url ([string]): url address where values are stored
+
+    Returns:
+        [Pandas DataFrame]: Table with sort values. The indexes of the rows are
+        the countries, and the columns are the dates.
     """
+
     data_df = pd.read_csv(url)
     colums_exclud = data_df.columns[[0, 2, 3]]
     data_df.drop(colums_exclud,
@@ -27,12 +35,18 @@ def data_country(cases_table, death_table, country):
     Function to create a matrix with data of confirmed cases of COVID-19 and
     death by COVID-19. The first column is data-times, the second column is
     confirmed cases of COVID-19, and the third column is deaths by COVID-19.
-    PARAMETERS
-    ----------
-    data_table: DataFrame with cases
-    death_table: DataFrame with deaths
-    country: Country to analize
+
+    Args:
+        cases_table ([Pandas DataFrame]): DataFrame with cases
+        death_table ([Pandas DataFrame]): DataFrame with deaths
+        country ([string]): Country to analize
+
+    Returns:
+        [Numpy Array]: Array with the recorded values of confirmed cases and
+        confirmed deaths for each date. The first column is the dates, the
+        second the confirmed cases and the third the confirmed deaths.
     """
+
     data_cases = cases_table.loc[country]
     data_death = death_table.loc[country]
     data_array = np.c_[data_cases.index,
@@ -42,7 +56,21 @@ def data_country(cases_table, death_table, country):
 
 
 def data_per_day(data_cases, data_death, country):
+    """
+    Function to calculate the new registered cases of the COVID-19 virus and
+    the new registered deaths. Values that are not suitable are removed from
+    the table.
 
+    Args:
+        data_cases ([Pandas DataFrame]): DataFrame with cases
+        data_death ([Pandas DataFrame]): DataFrame with deaths
+        country ([string]): Country to analize
+
+    Returns:
+        [tuple]: The return is a tuple with two numpy arrays. The first array
+        is the data of the new cases registered for each time, and the second
+        is the new deaths registered for each time.
+    """
     data_df = data_country(cases_table=data_cases,
                            death_table=data_death,
                            country=country)
@@ -66,14 +94,15 @@ def country_plot(data_cases, data_death, country, subplot=True, save=True):
     """
     Function to plot the data of COVID-19 confirmed cases and deaths by
     COVID-19 in the same plot.
-    PARAMETERS
-    ----------
-    data_cases: DataFrame with cases.
-    data_death: DataFrame with deaths.
-    country: Country to analize.
-    subplot: Subplot with last seven days. Default value is True.
-    save: Flag to save the plot. Default value is True.
+    Args:
+        data_cases ([Pandas DataFrame]): DataFrame with cases.
+        data_death ([Pandas DataFrame]): DataFrame with deaths.
+        country ([string]): Country to analize.
+        subplot (bool, optional): Subplot with last seven days. Defaults to
+        True.
+        save (bool, optional): Flag to save the plot. Defaults to True.
     """
+
     labels = "COVID-19 cases,COVID-19 deaths".split(",")
     colors = "tab:blue tab:red".split(" ")
     linestyle = "-. --".split(" ")
@@ -183,14 +212,14 @@ def comparison_plots(data_cases, data_death, countries, save=True):
     """
     Function to compare the behavior of the COVID-19 virus in different
     countries. The left plot shows the behavior of confirmed cases, and the
-    right plot shows the behavior of sizes by the virus..
-    PARAMETERS
-    ----------
-    data_cases: DataFrame with cases.
-    data_death: DataFrame with deaths.
-    countries: List the countries to analize.
-    save: Flag to save the plot. Default value is True.
+    right plot shows the behavior of sizes by the virus.
+    Args:
+        data_cases ([Pandas DataFrame]): DataFrame with cases.
+        data_death ([Pandas DataFrame]): DataFrame with deaths.
+        countries ([list]): List the countries to analize
+        save (bool, optional): Flag to save the plot. Defaults to True.
     """
+
     linestyle = "-. --".split(" ")
     linewidth = 0.9
     step_x = 20
@@ -273,15 +302,15 @@ def new_cases_per_day(data_cases, data_death, country, windows_size=7,
     Function to graph the new confirmed cases of the COVID-19 virus and the new
     deaths caused by the virus. The graph also shows the simple and exponential
     moving averages (SMA and EMA).
-    PARAMETERS
-    ----------
-    data_cases: DataFrame with cases.
-    data_death: DataFrame with deaths.
-    country: Country to analize.
-    windows_size: Number of elements to compute the average. Defauld value is
-    7.
-    alpha1: Factor alpha. Defauld value is 0.1
-    save: Flag to save the plot. Default value is True.
+
+    Args:
+        data_cases (Pandas DataFrame): DataFrame with cases.
+        data_death (Pandas DataFrame): DataFrame with deaths.
+        country (string): Country to analize.
+        windows_size (int, optional): Number of elements to compute the
+        average. Defaults to 7.
+        alpha1 (float, optional): Factor alpha. Defaults to 0.1.
+        save (bool, optional): Flag to save the plot. Defaults to True.
     """
 
     labels = "New confirmed cases of COVID per day,New confirmed deaths from\
@@ -386,14 +415,14 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
     """
     Function to graph the moving average and standard deviation for newly
     registered cases of COVID-19 and new deaths registered per day.
-    PARAMETERS
-    ----------
-    data_cases: DataFrame with cases.
-    data_death: DataFrame with deaths.
-    country: Country to analize.
-    windows_size: Number of elements to compute the average. Defauld value is
-    7.
-    save: Flag to save the plot. Default value is True.
+
+    Args:
+        data_cases (Pandas DataFrame): [description]
+        data_death (Pandas DataFrame): [description]
+        country (string): [description]
+        windows_size (int, optional): Number of elements to compute the average
+        and standard deviation. Defaults to 7.
+        save (bool, optional): Flag to save the plot. Defaults to True.
     """
 
     labels = "New confirmed cases of COVID per day,New confirmed deaths from COVID per day".split(
@@ -424,33 +453,7 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
     new_values_std = tuple(map(lambda i: pd.Series(new_values[i]).rolling(
         windows_size).std().dropna().values,
         range(len(new_values))))
-    """
-    data_df = data_country(cases_table=data_cases,
-                           death_table=data_death,
-                           country=country)
-    date_time = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
-                                  data_df[:, 0])))[1:]
-    cases = data_df[:, 1]
-    deaths = data_df[:, 2]
 
-    new_cases = np.array(list(map(lambda i: cases[i] - cases[i-1],
-                                  range(1, len(cases)))))
-    new_deaths = np.array(list(map(lambda i: deaths[i] - deaths[i-1],
-                                   range(1, len(deaths)))))
-    new_values = (new_cases, new_deaths)
-    
-    # SMA
-    new_cases_mov_aver = pd.Series(new_cases).rolling(
-        windows_size).mean().dropna().values
-    new_deaths_mov_aver = pd.Series(new_deaths).rolling(
-        windows_size).mean().dropna().values
-    new_cases_mov_std = pd.Series(new_cases).rolling(
-        windows_size).std().dropna().values
-    new_deaths_mov_std = pd.Series(new_deaths).rolling(
-        windows_size).std().dropna().values
-    new_values_sma = (new_cases_mov_aver, new_deaths_mov_aver)
-    new_values_std = (new_cases_mov_std, new_deaths_mov_std)
-    """
     data_ticks = (date_time_cases[np.arange(0, len(date_time_cases),
                                             step_x)],
                   date_time_deaths[np.arange(0, len(date_time_deaths),
@@ -511,49 +514,44 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
                     dpi=300)
 
 
-DEATH_BY_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
-CASES_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
-cases_df = data_preparation(url=CASES_COV)
-death_df = data_preparation(url=DEATH_BY_COV)
-new_cases_per_day_fill_plot(data_cases=cases_df, data_death=death_df,
-                            country="Colombia", save=False)
-plt.show()
-#print(data_per_day(data_cases=cases_df, data_death=death_df, country="Spain"))
-
-
-"""
 if __name__ == "__main__":
     DEATH_BY_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
     CASES_COV = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
 
-    cases_df = data_preparation(url=CASES_COV)
-    death_df = data_preparation(url=DEATH_BY_COV)
+    CASES_DF = data_preparation(url=CASES_COV)
+    DEATH_DF = data_preparation(url=DEATH_BY_COV)
     COUNTRIES_TO_ANALIZE = "Peru,Russia,Italy,US,France,Germany,Spain,\
 Portugal,Brazil,Colombia,Mexico,Ecuador,United Kingdom".split(",")
-    COUNTRIES_TO_ANALIZE = "Peru,Spain,Italy".split(
-        ",")
+    COUNTRIES_COMPARISON1 = "Brazil,Colombia,Peru,Argentina,Chile,Ecuador,\
+Bolivia".split(",")
+    COUNTRIES_COMPARISON2 = "Brazil,United Kingdom,Italy,France,Germany,\
+Spain".split(",")
+    COUNTRIES_COMPARISON3 = "Brazil,Mexico,US,Canada".split(",")
+    COUNTRIES = (COUNTRIES_COMPARISON1, COUNTRIES_COMPARISON2,
+                 COUNTRIES_COMPARISON3)
+    SAVE = True
+    plt.ioff()
 
     for country in COUNTRIES_TO_ANALIZE:
-        country_plot(data_cases=cases_df,
-                     data_death=death_df,
+        country_plot(data_cases=CASES_DF,
+                     data_death=DEATH_DF,
                      country=country,
-                     save=False,
+                     save=SAVE,
                      subplot=True)
-        new_cases_per_day(data_cases=cases_df,
-                          data_death=death_df,
+        new_cases_per_day(data_cases=CASES_DF,
+                          data_death=DEATH_DF,
                           country=country,
-                          save=False,
+                          save=SAVE,
                           windows_size=7,
                           alpha1=0.1)
-        new_cases_per_day_fill_plot(data_cases=cases_df,
-                                    data_death=death_df,
+        new_cases_per_day_fill_plot(data_cases=CASES_DF,
+                                    data_death=DEATH_DF,
                                     country=country,
                                     windows_size=7,
-                                    save=False)
+                                    save=SAVE)
 
-
-#    comparison_plots(data_cases=cases_df, data_death=death_df,
-#                     countries=["US", "Brazil", "Mexico"], save=False)
-
-    plt.show()
-"""
+    for countries in COUNTRIES:
+        comparison_plots(data_cases=CASES_DF,
+                         data_death=DEATH_DF,
+                         countries=countries,
+                         save=SAVE)
