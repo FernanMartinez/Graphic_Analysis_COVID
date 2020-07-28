@@ -328,9 +328,11 @@ COVID per day".split(",")
                            country=country)
     cases = data_df[0]
     deaths = data_df[0]
-    date_time_cases = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
+    date_time_cases = np.array(list(map(lambda x:
+                                        datetime.strptime(x, "%m/%d/%y"),
                                         cases[:, 0])))
-    date_time_deaths = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
+    date_time_deaths = np.array(list(map(lambda x:
+                                         datetime.strptime(x, "%m/%d/%y"),
                                          deaths[:, 0])))
     new_values = (cases[:, 1], deaths[:, 1])
     data_times = (date_time_cases, date_time_deaths)
@@ -425,8 +427,8 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
         save (bool, optional): Flag to save the plot. Defaults to True.
     """
 
-    labels = "New confirmed cases of COVID per day,New confirmed deaths from COVID per day".split(
-        ",")
+    labels = "New confirmed cases of COVID per day,New confirmed deaths from\
+COVID per day".split(",")
     colors = "tab:blue tab:red".split(" ")
     linewidth = 0.9
     step_x = 20
@@ -440,9 +442,11 @@ def new_cases_per_day_fill_plot(data_cases, data_death, country,
                            country=country)
     cases = data_df[0]
     deaths = data_df[0]
-    date_time_cases = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
+    date_time_cases = np.array(list(map(lambda x:
+                                        datetime.strptime(x, "%m/%d/%y"),
                                         cases[:, 0])))
-    date_time_deaths = np.array(list(map(lambda x: datetime.strptime(x, "%m/%d/%y"),
+    date_time_deaths = np.array(list(map(lambda x:
+                                         datetime.strptime(x, "%m/%d/%y"),
                                          deaths[:, 0])))
     new_values = (cases[:, 1], deaths[:, 1])
     data_times = (date_time_cases, date_time_deaths)
