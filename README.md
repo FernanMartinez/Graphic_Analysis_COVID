@@ -20,7 +20,7 @@
 
 ## Functions.
 
-The code has seven functions, three of which are for data processing and four for analysis. These functions are:
+The code has seven functions, three functions are for data processing and four for analysis. These functions are:
 
 - `data_preparation`: Function to load the data to be analyzed;
 
@@ -35,3 +35,9 @@ The code has seven functions, three of which are for data processing and four fo
 - `new_cases_per_day`: Function to graph the new confirmed cases of the COVID-19 virus and the new deaths caused by the virus;
 
 - `new_cases_per_day_fill_plot`: Function to graph the moving average and standard deviation for newly registered cases of COVID-19 and new deaths registered per day.
+
+## Some results
+
+### **'country_plot'**
+
+![Italy](Countries/Italy.png) ![US](Countries/US.png)
