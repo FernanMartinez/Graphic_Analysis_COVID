@@ -2,5 +2,6 @@
 **.ipynb_checkpoints
 **.mypy_cache
 **.vscode
+**.git
 config.py
 objectdb

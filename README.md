@@ -2,7 +2,7 @@
 
 > Code to perform a descriptive analysis of Virus COVID-19 in each country.
 
-## Features.
+## Features
 
 - Code to perform a descriptive analysis of the virus behavior in different countries;
 
@@ -18,7 +18,7 @@
   - The behavior of new deaths daily with the moving average (simple moving average, SMA, and exponential moving average EMA);
   - The behavior of the simple moving average (SMA) and standard deviation for new cases and confirmed deaths per day.
 
-## Functions.
+## Functions
 
 The code has seven functions, three functions are for data processing and four for analysis. These functions are:
 
