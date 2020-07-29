@@ -3,5 +3,6 @@
 **.mypy_cache
 **.vscode
 **.git
+.gitignore
 config.py
 objectdb
