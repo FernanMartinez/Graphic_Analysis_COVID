@@ -313,7 +313,7 @@ def new_cases_per_day(data_cases, data_death, country, windows_size=7,
         save (bool, optional): Flag to save the plot. Defaults to True.
     """
 
-    labels = "New confirmed cases of COVID per day,New confirmed deaths from\
+    labels = "New confirmed cases of COVID per day,New confirmed deaths from \
 COVID per day".split(",")
     colors = "tab:blue tab:red".split(" ")
     linewidth = 0.9
@@ -327,7 +327,7 @@ COVID per day".split(",")
                            data_death=data_death,
                            country=country)
     cases = data_df[0]
-    deaths = data_df[0]
+    deaths = data_df[1]
     date_time_cases = np.array(list(map(lambda x:
                                         datetime.strptime(x, "%m/%d/%y"),
                                         cases[:, 0])))
@@ -441,7 +441,7 @@ COVID per day".split(",")
                            data_death=data_death,
                            country=country)
     cases = data_df[0]
-    deaths = data_df[0]
+    deaths = data_df[1]
     date_time_cases = np.array(list(map(lambda x:
                                         datetime.strptime(x, "%m/%d/%y"),
                                         cases[:, 0])))
